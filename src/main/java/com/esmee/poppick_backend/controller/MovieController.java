@@ -1,9 +1,8 @@
 package com.esmee.poppick_backend.controller;
 
-import com.esmee.poppick.model.Movie;
-import com.esmee.poppick.repository.MovieRepository;
+import com.esmee.poppick_backend.model.Movie;
+import com.esmee.poppick_backend.repository.MovieRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +24,4 @@ public class MovieController {
         return movieRepository.findAll();
     }
 
-//    @PostMapping
-//    public Movie createList(@RequestBody Movie list) {
-//        return movieRepository.save(list);
-//    }
 }
