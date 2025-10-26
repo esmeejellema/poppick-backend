@@ -1,6 +1,5 @@
 package com.esmee.poppick_backend.model;
 
-
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.List;
 public class MovieList {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) //
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //
     private Long id;
 
     @Column (name = "list_name", nullable = false)
@@ -37,7 +36,6 @@ public class MovieList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Getters and setters
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     public Long getId() {
