@@ -61,6 +61,9 @@ public class UserService {
     // Inloggen gebruiker
     public String authenticateUser(String username, String password) {
         System.out.println("[AUTH] attempt username=" + username);
+        System.out.println("[DEBUG] Checking user: " + username);
+        System.out.println("[DEBUG] Raw password: " + password);
+
 
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(username, password);

@@ -64,4 +64,5 @@ public class SecurityConfig {
 //.requestMatchers("/", "/auth/**").permitAll()   home pagina en login pagina toegankelijk voor iedereen
 //.requestMatchers("/quiz/**", "/lists/**", "/profile/**").hasAuthority("QUIZTAKER")    alleen QUIZTAKER mag erbij
 //.anyRequest().authenticated()    alle andere endpoints vereisen een login
+// of denyAll() om toegang te weigeren. Docent wilt deze zien.
 //@EnableWebSecurity + .anyRequest().permitAll()
