@@ -2,6 +2,7 @@ package com.esmee.poppick_backend.service;
 
 import com.esmee.poppick_backend.dto.UserDto;
 import com.esmee.poppick_backend.exception.RoleNotFoundException;
+import com.esmee.poppick_backend.exception.UserNotFoundException;
 import com.esmee.poppick_backend.exception.UsernameAlreadyExistsException;
 import com.esmee.poppick_backend.model.Role;
 import com.esmee.poppick_backend.model.User;
@@ -16,6 +17,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+//import images
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -80,10 +89,45 @@ public class UserService {
             throw ax; // Controller handelt 401 af
         }
     }
-    //    public User updateProfileImage(Long userId, String filename) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new UserNotFoundException("User not found"));
-//
-//        user.setProfileImage(filename);
-//        return userRepository.save(user);
+        public User updateProfileImage(Long userId, MultipartFile file) throws IOException {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (file == null || file.isEmpty()) {
+                throw new RuntimeException("No file provided");
+            }
+
+            // Zorg dat uploads folder bestaat
+            String uploadDir = "uploads/";
+            Files.createDirectories(Paths.get(uploadDir));
+
+            // Unieke bestandsnaam
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + fileName);
+
+            // Bestand opslaan
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // URL/path opslaan in database
+            user.setProfileImage("/uploads/" + fileName);
+            return userRepository.save(user);
+        }
+    public void deleteProfileImage(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Optioneel: bestand verwijderen van filesystem
+        if (user.getProfileImage() != null) {
+            Path filePath = Paths.get("uploads/" + user.getProfileImage());
+            try {
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        user.setProfileImage(null);
+        userRepository.save(user);
+    }
+
 }

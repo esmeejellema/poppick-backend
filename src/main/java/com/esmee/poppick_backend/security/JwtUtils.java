@@ -15,7 +15,7 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${poppick.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private long jwtExpirationMs;
 
     // wordt aangeroepen nadat gebruiker is ingelogd en bouwt een token.
     public String generateJwtToken(Authentication authentication) {

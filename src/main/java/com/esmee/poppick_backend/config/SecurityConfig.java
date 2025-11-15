@@ -47,6 +47,8 @@ public class SecurityConfig {
                 .authenticationProvider(provider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // homepage + login/register vrij
+                        .requestMatchers("/api/auth/users/**").authenticated() // alleen ingelogde users kunnen uploaden
+                        .requestMatchers("/uploads/**").permitAll()  // iedereen kan afbeeldingen bekijken
                         .requestMatchers("/api/movies/**", "/api/movielists/**", "/api/recommendations/**").hasAnyAuthority("QUIZTAKER", "ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -55,6 +57,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
 
 //regelsysteem van Spring Security

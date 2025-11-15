@@ -1,15 +1,18 @@
 package com.esmee.poppick_backend.controller;
 
 import com.esmee.poppick_backend.dto.UserDto;
-//import com.esmee.poppick_backend.model.User;
+import com.esmee.poppick_backend.model.User;
 import com.esmee.poppick_backend.service.UserService;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-//import java.util.HashMap;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.Map;
 
 
@@ -31,6 +34,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
         }
     }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginUser(@RequestBody UserDto userDto) {
         try {
@@ -39,18 +43,27 @@ public class UserController {
         } catch (org.springframework.security.core.AuthenticationException ax) {
             return ResponseEntity.status(401).body(java.util.Map.of("error", ax.getMessage()));
         }
-
     }
 
-//    // Voeg deze methode toe aan je bestaande UserController
-//    @PutMapping("/users/{id}/profile-image")
-//    public ResponseEntity<User> updateProfileImage(
-//            @PathVariable Long id,
-//            @RequestParam(required = false) String filename) {
-//
-//        User updatedUser = userService.updateProfileImage(id, filename);
-//        return ResponseEntity.ok(updatedUser);
-//    }
+    @PatchMapping("/users/{id}/profile-image")
+    public ResponseEntity<User> updateProfileImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
 
-
+        User updatedUser = userService.updateProfileImage(id, file);
+        return ResponseEntity.ok(updatedUser);
+    }
 }
+    @DeleteMapping("/users/{id}/profile-image")
+    public ResponseEntity<Void> deleteProfileImage(@PathVariable Long id, Principal principal) {
+        User user = userService.findById(id);
+
+        // Alleen eigenaar mag verwijderen
+        if (!user.getUsername().equals(principal.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        userService.deleteProfileImage(id);
+        return ResponseEntity.noContent().build();
+    }
+
